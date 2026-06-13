@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillSphere Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #2c2f35;
+    --paper: #f0f4f8;
+    --sky: #4a7fa5;
+    --sky-light: #ddeaf4;
+    --moss: #4a8c6f;
+    --moss-light: #d6ede3;
+    --amber: #b07d3a;
+    --amber-light: #f5e8cc;
+    --violet: #6b5ea8;
+    --violet-light: #e5e1f5;
+    --rose: #a05060;
+    --rose-light: #f5dde2;
+    --muted: #7a8494;
+    --border: #dce3eb;
+    --card: #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(240,244,248,0.94);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.5rem; color: var(--ink);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .nav-logo span { color: var(--sky); }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-links button {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem; font-weight: 500;
+    color: var(--muted);
+    padding: 0.5rem 1rem; border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .nav-links button:hover { color: var(--ink); background: var(--border); }
+  .nav-links button.active { color: var(--sky); background: var(--sky-light); }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: calc(100vh - 64px);
+    display: flex; align-items: center;
+    padding: 4rem 2rem;
+    max-width: 1200px; margin: 0 auto;
+    gap: 4rem;
+  }
+  .hero-text { flex: 1; }
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--sky);
+    background: var(--sky-light); padding: 0.35rem 0.85rem;
+    border-radius: 100px; margin-bottom: 1.5rem;
+  }
+  .hero-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1.05; margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .hero-title em { font-style: italic; color: var(--sky); }
+  .hero-sub { font-size: 1.15rem; color: var(--muted); max-width: 480px; margin-bottom: 2.5rem; line-height: 1.7; }
+  .btn-primary {
+    background: var(--sky); color: #fff;
+    border: none; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem; font-weight: 600;
+    padding: 0.85rem 2rem; border-radius: 10px;
+    transition: all 0.2s; display: inline-block;
+  }
+  .btn-primary:hover { background: #3a6e92; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,127,165,0.28); }
+  .btn-outline {
+    background: none; color: var(--ink);
+    border: 1.5px solid var(--border); cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem; font-weight: 500;
+    padding: 0.85rem 2rem; border-radius: 10px;
+    transition: all 0.2s; display: inline-block; margin-left: 1rem;
+  }
+  .btn-outline:hover { border-color: var(--sky); color: var(--sky); }
+
+  /* hero visual */
+  .hero-visual {
+    flex: 0 0 380px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+  .skill-chip {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem;
+    display: flex; flex-direction: column; gap: 0.5rem;
+    cursor: pointer; transition: all 0.25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .skill-chip:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); border-color: transparent; }
+  .skill-chip .chip-icon { font-size: 1.75rem; }
+  .skill-chip .chip-name { font-weight: 600; font-size: 0.9rem; }
+  .skill-chip .chip-tag { font-size: 0.72rem; color: var(--muted); }
+  .skill-chip.c1 { border-top: 3px solid var(--sky); }
+  .skill-chip.c2 { border-top: 3px solid var(--moss); }
+  .skill-chip.c3 { border-top: 3px solid var(--amber); }
+  .skill-chip.c4 { border-top: 3px solid var(--violet); }
+
+  /* ── HOME HIGHLIGHTS ── */
+  .section { padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.1; margin-bottom: 1rem;
+  }
+  .section-title .hl { color: var(--sky); }
+  .section-sub { color: var(--muted); max-width: 520px; margin-bottom: 3rem; font-size: 1.05rem; }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
+  .skill-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem;
+    cursor: pointer; transition: all 0.25s;
+    position: relative; overflow: hidden;
+  }
+  .skill-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent-color);
+  }
+  .skill-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); border-color: transparent; }
+  .skill-card .card-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .skill-card .card-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; }
+  .skill-card .card-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+  .skill-card .card-tag {
+    display: inline-block; margin-top: 0.75rem;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.2rem 0.6rem; border-radius: 100px; background: var(--tag-bg); color: var(--tag-color);
+  }
+
+  /* ── SKILL MODAL / DETAIL VIEW ── */
+  .overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(15,15,20,0.6); backdrop-filter: blur(4px);
+    align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem; overflow-y: auto;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--card); border-radius: 20px;
+    max-width: 760px; width: 100%;
+    padding: 2.5rem; position: relative;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.2);
+    margin: auto;
+  }
+  .modal-close {
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    background: var(--border); border: none; cursor: pointer;
+    width: 36px; height: 36px; border-radius: 50%;
+    font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: #e5e4de; }
+  .modal-badge {
+    display: inline-block; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.3rem 0.75rem; border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+  .modal-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2rem; margin-bottom: 0.5rem;
+  }
+  .modal-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .modal-tabs { display: flex; gap: 0.5rem; margin: 1.5rem 0; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+  .modal-tab {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem; font-weight: 500; color: var(--muted);
+    padding: 0.5rem 1rem 0.75rem; border-bottom: 2px solid transparent;
+    margin-bottom: -1px; transition: all 0.2s;
+  }
+  .modal-tab.active { color: var(--sky); border-bottom-color: var(--sky); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .theory-body { line-height: 1.8; color: #4a5568; }
+  .theory-body h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: var(--ink); }
+  .theory-body ul { padding-left: 1.25rem; }
+  .theory-body li { margin-bottom: 0.4rem; }
+  .theory-body p { margin-bottom: 0.75rem; }
+  .theory-body code {
+    background: #f3f4f6; padding: 0.1rem 0.4rem; border-radius: 4px;
+    font-family: monospace; font-size: 0.85em;
+  }
+
+  /* quiz */
+  .quiz-q { margin-bottom: 1.5rem; }
+  .quiz-q .q-text { font-weight: 600; margin-bottom: 0.75rem; }
+  .quiz-option {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.65rem 1rem; border: 1.5px solid var(--border);
+    border-radius: 8px; cursor: pointer; margin-bottom: 0.5rem;
+    transition: all 0.2s; font-size: 0.9rem;
+  }
+  .quiz-option:hover { border-color: var(--sky); background: var(--sky-light); }
+  .quiz-option.selected { border-color: var(--sky); background: var(--sky-light); }
+  .quiz-option.correct { border-color: var(--moss); background: var(--moss-light); }
+  .quiz-option.wrong { border-color: var(--rose); background: var(--rose-light); }
+  .quiz-option input { pointer-events: none; }
+  .quiz-result {
+    margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px;
+    text-align: center; font-weight: 600; font-size: 1.1rem;
+    display: none;
+  }
+  .quiz-result.pass { background: var(--moss-light); color: #3a7a5a; }
+  .quiz-result.fail { background: var(--rose-light); color: #8a4050; }
+
+  /* ── LEARNING PAGE ── */
+  .learn-hero {
+    background: linear-gradient(135deg, #2d3e50 0%, #3d6080 100%);
+    color: #fff; padding: 2.5rem 2rem 2rem;
+    text-align: center;
+  }
+  .learn-hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 0.5rem;
+  }
+  .learn-hero p { color: #b8c8d8; font-size: 1rem; max-width: 520px; margin: 0 auto; }
+  .learn-filters {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    padding: 1.25rem 2rem 0; max-width: 1200px; margin: 0 auto;
+  }
+  .filter-btn {
+    background: var(--card); border: 1.5px solid var(--border);
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.83rem; font-weight: 500;
+    padding: 0.45rem 1rem; border-radius: 100px;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--sky); border-color: var(--sky); color: #fff; }
+  .learn-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem; padding: 1.25rem 2rem 2rem; max-width: 1200px; margin: 0 auto;
+  }
+  .learn-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    cursor: pointer; transition: all 0.25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .learn-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+  .learn-card-top {
+    padding: 1.25rem 1.25rem 0.75rem;
+    font-size: 2rem;
+  }
+  .learn-card-body { padding: 0 1.25rem 1.25rem; }
+  .learn-card-body h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .learn-card-body p { font-size: 0.83rem; color: var(--muted); line-height: 1.55; margin-bottom: 1rem; }
+  .learn-card-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 0.78rem; color: var(--muted);
+  }
+  .learn-card-meta .diff {
+    padding: 0.2rem 0.6rem; border-radius: 100px;
+    font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em;
+  }
+  .diff-beg { background: var(--moss-light); color: #3a7a5a; }
+  .diff-int { background: var(--amber-light); color: #8a5e28; }
+  .diff-adv { background: var(--rose-light); color: #8a4050; }
+
+  /* ── ABOUT PAGE ── */
+  .about-hero {
+    padding: 3rem 2rem 2rem;
+    max-width: 900px; margin: 0 auto; text-align: center;
+  }
+  .about-hero .project-tag {
+    display: inline-block; background: var(--violet-light); color: var(--violet);
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.35rem 0.85rem; border-radius: 100px; margin-bottom: 1.5rem;
+  }
+  .about-hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.1; margin-bottom: 1rem;
+  }
+  .about-hero h1 .hl-blue { color: var(--sky); }
+  .about-hero h1 .hl-violet { color: var(--violet); }
+  .about-hero h1 .hl-moss { color: var(--moss); }
+  .about-hero p { font-size: 1.1rem; color: var(--muted); line-height: 1.75; max-width: 620px; margin: 0 auto 2rem; }
+  .about-divider { height: 1px; background: var(--border); max-width: 1200px; margin: 0 auto; }
+  .about-section {
+    max-width: 1200px; margin: 0 auto; padding: 2rem 2rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center;
+  }
+  .about-section.reverse { direction: rtl; }
+  .about-section.reverse > * { direction: ltr; }
+  .about-box h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2rem; margin-bottom: 1rem;
+  }
+  .about-box p { color: var(--muted); line-height: 1.75; margin-bottom: 1rem; }
+  .about-visual {
+    background: linear-gradient(135deg, #e8f2f9, #eae7f5);
+    border-radius: 20px; padding: 2.5rem;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .info-row {
+    display: flex; align-items: center; gap: 1rem;
+    background: #fff; border-radius: 10px; padding: 1rem 1.25rem;
+    font-size: 0.9rem; font-weight: 500;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .info-row .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .tech-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+  .tech-pill {
+    background: var(--sky-light); color: var(--sky);
+    font-size: 0.8rem; font-weight: 600;
+    padding: 0.3rem 0.85rem; border-radius: 100px;
+  }
+  .goals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 1rem; }
+  .goal-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem;
+  }
+  .goal-item .g-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .goal-item h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .goal-item p { font-size: 0.8rem; color: var(--muted); }
+
+  /* ── SERVICES PAGE ── */
+  .svc-hero {
+    padding: 3rem 2rem 1.5rem; text-align: center;
+    max-width: 700px; margin: 0 auto;
+  }
+  .svc-hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 1rem;
+  }
+  .svc-hero p { color: var(--muted); font-size: 1.05rem; }
+  .review-form-wrap {
+    max-width: 820px; margin: 0 auto 2.5rem; padding: 0 2rem;
+  }
+  .review-form {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 2.5rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+  .review-form h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem; margin-bottom: 1.75rem;
+  }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-group label {
+    display: block; font-size: 0.85rem; font-weight: 600;
+    margin-bottom: 0.4rem; color: var(--ink);
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem;
+    background: var(--paper); color: var(--ink);
+    transition: border-color 0.2s; resize: vertical;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none; border-color: var(--sky);
+    box-shadow: 0 0 0 3px rgba(74,127,165,0.15);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .star-rating { display: flex; gap: 0.5rem; margin-top: 0.25rem; }
+  .star { font-size: 1.75rem; cursor: pointer; color: #c8d0da; transition: color 0.15s; }
+  .star.lit { color: #c89a3a; }
+  .reviews-list {
+    max-width: 820px; margin: 0 auto; padding: 0 2rem 5rem;
+  }
+  .reviews-list h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem; margin-bottom: 1.5rem;
+  }
+  .review-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .review-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+  .review-card-meta { display: flex; flex-direction: column; }
+  .review-card-name { font-weight: 700; font-size: 0.95rem; }
+  .review-card-skill { font-size: 0.78rem; color: var(--muted); }
+  .review-card-stars { color: #c89a3a; font-size: 1.1rem; }
+  .review-card-text { font-size: 0.9rem; color: #4a5568; line-height: 1.65; }
+  .review-card-rating-label {
+    display: inline-block; margin-top: 0.5rem;
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.2rem 0.65rem; border-radius: 100px;
+    background: var(--moss-light); color: #15803d;
+  }
+  .submit-msg {
+    display: none; margin-top: 1rem; padding: 1rem; border-radius: 10px;
+    background: var(--moss-light); color: #3a7a5a; font-weight: 600; text-align: center;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #2d3e50; color: #aab8c6;
+    padding: 3rem 2rem; text-align: center;
+  }
+  footer .ft-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.5rem; color: #e8eef4; margin-bottom: 0.5rem;
+  }
+  footer .ft-logo span { color: var(--sky); }
+  footer p { font-size: 0.85rem; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero { flex-direction: column; gap: 2rem; padding: 2rem 1rem; }
+    .hero-visual { flex: none; width: 100%; }
+    .about-section { grid-template-columns: 1fr; gap: 2rem; }
+    .about-section.reverse { direction: ltr; }
+    .form-row { grid-template-columns: 1fr; }
+    .goals-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-logo">Skill<span>Sphere</span></div>
+  <div class="nav-links">
+    <button class="active" onclick="goPage('home', this)">Home</button>
+    <button onclick="goPage('learn', this)">Learning</button>
+    <button onclick="goPage('about', this)">About</button>
+    <button onclick="goPage('services', this)">Services</button>
+  </div>
+</nav>
+
+<!-- ══════════ HOME PAGE ══════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-text">
+      <span class="hero-eyebrow">EdTech · MVP Platform</span>
+      <h1 class="hero-title">Learn any <em>skill</em>,<br>prove it with tests.</h1>
+      <p class="hero-sub">SkillSphere puts theory and practice in one place. Pick a skill, study the fundamentals, then take a focused test to validate what you know.</p>
+      <button class="btn-primary" onclick="goPage('learn', document.querySelector('.nav-links button:nth-child(2)'))">Browse Skills</button>
+      <button class="btn-outline" onclick="goPage('about', document.querySelector('.nav-links button:nth-child(3)'))">About Project</button>
+    </div>
+    <div class="hero-visual">
+      <div class="skill-chip c1" onclick="openSkill('python')">
+        <span class="chip-icon">🐍</span>
+        <span class="chip-name">Python</span>
+        <span class="chip-tag">Programming</span>
+      </div>
+      <div class="skill-chip c2" onclick="openSkill('html')">
+        <span class="chip-icon">🌐</span>
+        <span class="chip-name">HTML/CSS</span>
+        <span class="chip-tag">Web Dev</span>
+      </div>
+      <div class="skill-chip c3" onclick="openSkill('sql')">
+        <span class="chip-icon">🗄️</span>
+        <span class="chip-name">SQL</span>
+        <span class="chip-tag">Databases</span>
+      </div>
+      <div class="skill-chip c4" onclick="openSkill('js')">
+        <span class="chip-icon">⚡</span>
+        <span class="chip-name">JavaScript</span>
+        <span class="chip-tag">Programming</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured Skills on Home -->
+  <div style="background: #fff; border-top: 1px solid var(--border);">
+    <div class="section">
+      <div class="section-label">Popular right now</div>
+      <h2 class="section-title">Tap a skill to <span class="hl">learn & test</span></h2>
+      <p class="section-sub">Every card opens a theory lesson followed by a quick quiz. No signup required.</p>
+      <div class="skills-grid" id="home-skills-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LEARNING PAGE ══════════ -->
+<div class="page" id="page-learn">
+  <div class="learn-hero">
+    <h1>All Skills & Languages</h1>
+    <p>Choose a topic, read the theory, take the test. Learn at your own pace.</p>
+  </div>
+  <div class="learn-filters">
+    <button class="filter-btn active" onclick="filterLearn('all', this)">All</button>
+    <button class="filter-btn" onclick="filterLearn('programming', this)">Programming Languages</button>
+    <button class="filter-btn" onclick="filterLearn('web', this)">Web Development</button>
+    <button class="filter-btn" onclick="filterLearn('data', this)">Data & Databases</button>
+    <button class="filter-btn" onclick="filterLearn('cs', this)">CS Fundamentals</button>
+    <button class="filter-btn" onclick="filterLearn('soft', this)">Soft Skills</button>
+  </div>
+  <div class="learn-grid" id="learn-grid"></div>
+</div>
+
+<!-- ══════════ ABOUT PAGE ══════════ -->
+<div class="page" id="page-about">
+  <div style="max-width:680px; margin:0 auto; padding:3rem 2rem 4rem;">
+
+    <span class="project-tag" style="display:inline-block; background:var(--violet-light); color:var(--violet); font-size:0.75rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:0.35rem 0.85rem; border-radius:100px; margin-bottom:1.25rem;">Project Overview</span>
+
+    <h1 style="font-family:'Instrument Serif',serif; font-size:clamp(2rem,4vw,2.75rem); line-height:1.15; margin-bottom:1rem; color:var(--ink);">
+      <span style="color:var(--sky);">SkillSphere</span> Learning Hub
+    </h1>
+
+    <p style="font-size:1.05rem; color:var(--muted); line-height:1.8; margin-bottom:2rem;">
+      SkillSphere is an EdTech MVP that gives students, fresh graduates, and job seekers a simple way to learn and verify technical skills. Pick a skill, read the theory, take the test — all in one place.
+    </p>
+
+    <div style="height:1px; background:var(--border); margin-bottom:2rem;"></div>
+
+    <h2 style="font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:1rem;">Project Details</h2>
+    <div style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:2rem;">
+      <div style="display:flex; gap:1rem; padding:0.75rem 1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.9rem;">
+        <span style="color:var(--muted); min-width:120px;">Domain</span>
+        <span style="font-weight:600;">Education Technology (EdTech)</span>
+      </div>
+      <div style="display:flex; gap:1rem; padding:0.75rem 1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.9rem;">
+        <span style="color:var(--muted); min-width:120px;">Stage</span>
+        <span style="font-weight:600;">MVP Prototype</span>
+      </div>
+      <div style="display:flex; gap:1rem; padding:0.75rem 1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.9rem;">
+        <span style="color:var(--muted); min-width:120px;">Built with</span>
+        <span style="font-weight:600;">HTML · CSS · JavaScript</span>
+      </div>
+      <div style="display:flex; gap:1rem; padding:0.75rem 1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.9rem;">
+        <span style="color:var(--muted); min-width:120px;">Skills covered</span>
+        <span style="font-weight:600;">13 topics</span>
+      </div>
+      <div style="display:flex; gap:1rem; padding:0.75rem 1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.9rem;">
+        <span style="color:var(--muted); min-width:120px;">Audience</span>
+        <span style="font-weight:600;">Students · Graduates · Job Seekers</span>
+      </div>
+    </div>
+
+    <div style="height:1px; background:var(--border); margin-bottom:2rem;"></div>
+
+    <h2 style="font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:1rem;">Future Plans</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:2rem;">
+      <div style="padding:1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.88rem;">🔐 Student Login</div>
+      <div style="padding:1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.88rem;">📊 Learning Dashboard</div>
+      <div style="padding:1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.88rem;">🏆 Certificates</div>
+      <div style="padding:1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.88rem;">📈 Progress Tracking</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ SERVICES PAGE ══════════ -->
+<div class="page" id="page-services">
+  <div class="svc-hero">
+    <span class="hero-eyebrow" style="background:var(--violet-light);color:var(--violet);">Share your experience</span>
+    <h1>Rate the Skills & Tests</h1>
+    <p>Your feedback shapes what we improve next. Tell us about a skill you tested and how the experience went.</p>
+  </div>
+
+  <div class="review-form-wrap">
+    <div class="review-form">
+      <h3>Submit a Review</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="rv-name" placeholder="e.g. Priya S.">
+        </div>
+        <div class="form-group">
+          <label>Skill Tested</label>
+          <select id="rv-skill">
+            <option value="">— Select a skill —</option>
+            <option>Python</option>
+            <option>JavaScript</option>
+            <option>HTML/CSS</option>
+            <option>Java</option>
+            <option>C++</option>
+            <option>SQL</option>
+            <option>React</option>
+            <option>Data Structures</option>
+            <option>Algorithms</option>
+            <option>Git</option>
+            <option>Linux</option>
+            <option>TypeScript</option>
+            <option>Communication Skills</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Test Difficulty (your perception)</label>
+        <select id="rv-diff">
+          <option value="">— How did it feel? —</option>
+          <option>Too easy — needs harder questions</option>
+          <option>About right — well balanced</option>
+          <option>Challenging — loved it</option>
+          <option>Too hard — needs more theory</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Overall Rating</label>
+        <div class="star-rating" id="star-rating">
+          <span class="star" data-v="1">★</span>
+          <span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span>
+          <span class="star" data-v="4">★</span>
+          <span class="star" data-v="5">★</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Your Review</label>
+        <textarea id="rv-text" rows="4" placeholder="What did you learn? What could be better?"></textarea>
+      </div>
+      <button class="btn-primary" onclick="submitReview()">Submit Review</button>
+      <div class="submit-msg" id="submit-msg">✅ Thanks! Your review has been added below.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ SKILL MODAL ══════════ -->
+<div class="overlay" id="skill-overlay" onclick="closeOverlay(event)">
+  <div class="modal" id="skill-modal">
+    <button class="modal-close" onclick="closeSkill()">✕</button>
+    <div class="modal-icon" id="m-icon"></div>
+    <span class="modal-badge" id="m-badge"></span>
+    <h2 class="modal-title" id="m-title"></h2>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTab('theory', this)">📖 Theory</button>
+      <button class="modal-tab" onclick="switchTab('quiz', this)">✏️ Quick Test</button>
+    </div>
+    <div class="tab-content active" id="tab-theory">
+      <div class="theory-body" id="theory-body"></div>
+    </div>
+    <div class="tab-content" id="tab-quiz">
+      <div id="quiz-body"></div>
+      <button class="btn-primary" id="quiz-submit-btn" onclick="submitQuiz()" style="margin-top:1.5rem;">Submit Answers</button>
+      <div class="quiz-result" id="quiz-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="ft-logo">Skill<span>Sphere</span> Learning Hub</div>
+  <p>An EdTech MVP · Built with HTML, CSS & JavaScript</p>
+</footer>
+
+<script>
+/* ═══════════ DATA ═══════════ */
+const SKILLS = [
+  {
+    id:'python', name:'Python', icon:'🐍', cat:'programming', diff:'beg',
+    desc:'The world\'s most readable programming language — ideal for beginners and data scientists alike.',
+    color:'var(--sky)', tagBg:'var(--sky-light)', tagColor:'var(--sky)', tag:'Programming',
+    theory:`
+      <p>Python is a high-level, interpreted, general-purpose programming language created by Guido van Rossum in 1991. Its design philosophy prioritises code readability using significant indentation.</p>
+      <h4>Core Concepts</h4>
+      <ul>
+        <li><strong>Variables & Types:</strong> Python is dynamically typed — no need to declare types. Common types: <code>int</code>, <code>float</code>, <code>str</code>, <code>list</code>, <code>dict</code>, <code>bool</code>.</li>
+        <li><strong>Control Flow:</strong> <code>if/elif/else</code>, <code>for</code> loops, <code>while</code> loops control the execution path.</li>
+        <li><strong>Functions:</strong> Defined with <code>def</code>. Support default args, *args, **kwargs.</li>
+        <li><strong>Lists & Dicts:</strong> Lists are ordered and mutable. Dicts are key-value stores. Both support comprehensions.</li>
+        <li><strong>OOP:</strong> Python supports classes, inheritance, and polymorphism via the <code>class</code> keyword.</li>
+      </ul>
+      <h4>Key Syntax Example</h4>
+      <p><code>for i in range(10): print(i)</code> — print 0 through 9.</p>
+      <h4>Why Python?</h4>
+      <ul>
+        <li>Huge ecosystem: NumPy, Pandas, Flask, Django, TensorFlow.</li>
+        <li>Rapid prototyping due to concise syntax.</li>
+        <li>Top language for data science, automation, and web backends.</li>
+      </ul>
+    `,
+    quiz:[
+      { q:'What keyword defines a function in Python?', opts:['func','define','def','function'], ans:2 },
+      { q:'Which data structure uses key-value pairs in Python?', opts:['list','tuple','set','dict'], ans:3 },
+      { q:'What does range(5) produce?', opts:['1 to 5','0 to 5','0 to 4','1 to 4'], ans:2 },
+      { q:'Python is __________ typed.', opts:['statically','dynamically','strongly-statically','un-typed'], ans:1 },
+      { q:'Which symbol starts a comment in Python?', opts:['//','/*','#','--'], ans:2 },
+    ]
+  },
+  {
+    id:'js', name:'JavaScript', icon:'⚡', cat:'programming', diff:'int',
+    desc:'The language of the web — runs in every browser and increasingly on servers via Node.js.',
+    color:'var(--amber)', tagBg:'var(--amber-light)', tagColor:'var(--amber)', tag:'Programming',
+    theory:`
+      <p>JavaScript (JS) is a lightweight, interpreted scripting language that enables interactive web pages. Alongside HTML and CSS, it is one of the core technologies of the World Wide Web.</p>
+      <h4>Core Concepts</h4>
+      <ul>
+        <li><strong>Variables:</strong> Declared with <code>var</code>, <code>let</code> (block-scoped), or <code>const</code> (immutable binding).</li>
+        <li><strong>Functions:</strong> First-class citizens — can be stored in variables, passed as arguments, returned from other functions.</li>
+        <li><strong>DOM Manipulation:</strong> <code>document.getElementById()</code>, <code>querySelector()</code> let JS interact with HTML elements.</li>
+        <li><strong>Events:</strong> <code>addEventListener('click', fn)</code> attaches behaviour to user interactions.</li>
+        <li><strong>Promises & Async/Await:</strong> Handle asynchronous operations like fetching data from an API.</li>
+        <li><strong>ES6+ features:</strong> Arrow functions, template literals, destructuring, spread operator, modules.</li>
+      </ul>
+      <h4>Example</h4>
+      <p><code>const greet = name => \`Hello, \${name}!\`;</code></p>
+      <h4>Ecosystem</h4>
+      <ul>
+        <li>Frontend frameworks: React, Vue, Angular.</li>
+        <li>Backend: Node.js + Express.</li>
+        <li>Package manager: npm / yarn.</li>
+      </ul>
+    `,
+    quiz:[
+      { q:'Which keyword creates a block-scoped variable in modern JS?', opts:['var','let','def','dim'], ans:1 },
+      { q:'What does === check?', opts:['value only','type only','value and type','reference'], ans:2 },
+      { q:'Arrow functions use which symbol?', opts:['=>','->', '::', '~>'], ans:0 },
+      { q:'Which method adds an event listener?', opts:['onEvent()','listenTo()','addEventListener()','bindEvent()'], ans:2 },
+      { q:'What does JSON stand for?', opts:['JavaScript Object Notation','Java Script Object Notation','JavaScript Online Node','JSON Script Object Naming'], ans:0 },
+    ]
+  },
+  {
+    id:'html', name:'HTML/CSS', icon:'🌐', cat:'web', diff:'beg',
+    desc:'The structural and visual backbone of every web page you have ever visited.',
+    color:'var(--rose)', tagBg:'var(--rose-light)', tagColor:'var(--rose)', tag:'Web Dev',
+    theory:`
+      <p>HTML (HyperText Markup Language) defines the structure and meaning of web content. CSS (Cascading Style Sheets) controls presentation and layout.</p>
+      <h4>HTML Essentials</h4>
+      <ul>
+        <li>Elements are surrounded by tags: <code>&lt;p&gt;text&lt;/p&gt;</code>.</li>
+        <li>Semantic tags: <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;footer&gt;</code>.</li>
+        <li>Attributes provide extra information: <code>href</code>, <code>src</code>, <code>alt</code>, <code>class</code>, <code>id</code>.</li>
+        <li>Forms: <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code>, <code>&lt;button&gt;</code> collect user data.</li>
+      </ul>
+      <h4>CSS Essentials</h4>
+      <ul>
+        <li><strong>Selectors:</strong> Target elements by tag, class (<code>.name</code>), or id (<code>#name</code>).</li>
+        <li><strong>Box Model:</strong> Every element is a box: content → padding → border → margin.</li>
+        <li><strong>Flexbox:</strong> One-dimensional layout (<code>display:flex</code>).</li>
+        <li><strong>Grid:</strong> Two-dimensional layout (<code>display:grid</code>).</li>
+        <li><strong>Media Queries:</strong> <code>@media (max-width:768px)</code> enables responsive design.</li>
+      </ul>
+    `,
+    quiz:[
+      { q:'Which tag creates a hyperlink in HTML?', opts:['<link>','<a>','<href>','<url>'], ans:1 },
+      { q:'What CSS property changes text colour?', opts:['font-color','text-color','color','foreground'], ans:2 },
+      { q:'Which HTML5 tag is used for the main navigation?', opts:['<menu>','<header>','<nav>','<section>'], ans:2 },
+      { q:'What does CSS stand for?', opts:['Creative Style System','Cascading Style Sheets','Colourful Style Syntax','Computer Style Script'], ans:1 },
+      { q:'Which property makes a flex container?', opts:['block','flex-wrap','display:flex','flex:1'], ans:2 },
+    ]
+  },
+  {
+    id:'sql', name:'SQL', icon:'🗄️', cat:'data', diff:'beg',
+    desc:'The universal language for querying and managing relational databases.',
+    color:'var(--moss)', tagBg:'var(--moss-light)', tagColor:'var(--moss)', tag:'Databases',
+    theory:`
+      <p>SQL (Structured Query Language) is the standard language for interacting with relational databases such as MySQL, PostgreSQL, and SQLite.</p>
+      <h4>Core Commands</h4>
+      <ul>
+        <li><strong>SELECT:</strong> Retrieve data — <code>SELECT name, age FROM users WHERE age > 18;</code></li>
+        <li><strong>INSERT:</strong> Add rows — <code>INSERT INTO users (name, age) VALUES ('Ali', 22);</code></li>
+        <li><strong>UPDATE:</strong> Modify rows — <code>UPDATE users SET age=23 WHERE name='Ali';</code></li>
+        <li><strong>DELETE:</strong> Remove rows — <code>DELETE FROM users WHERE age &lt; 18;</code></li>
+        <li><strong>CREATE TABLE:</strong> Define schema with column names and types.</li>
+      </ul>
+      <h4>Joins</h4>
+      <ul>
+        <li><strong>INNER JOIN:</strong> Rows matching in both tables.</li>
+        <li><strong>LEFT JOIN:</strong> All rows from left table, matched rows from right.</li>
+        <li><strong>RIGHT JOIN:</strong> Opposite of LEFT JOIN.</li>
+      </ul>
+      <h4>Aggregates</h4>
+      <p><code>COUNT()</code>, <code>SUM()</code>, <code>AVG()</code>, <code>MAX()</code>, <code>MIN()</code> — used with <code>GROUP BY</code>.</p>
+    `,
+    quiz:[
+      { q:'Which SQL clause filters rows?', opts:['GROUP BY','ORDER BY','WHERE','HAVING'], ans:2 },
+      { q:'What does SELECT * do?', opts:['Selects one column','Selects all columns','Deletes all rows','Creates a table'], ans:1 },
+      { q:'Which JOIN returns all rows from both tables?', opts:['INNER JOIN','LEFT JOIN','RIGHT JOIN','FULL OUTER JOIN'], ans:3 },
+      { q:'Which aggregate counts total rows?', opts:['SUM()','AVG()','COUNT()','TOTAL()'], ans:2 },
+      { q:'Which keyword removes duplicate results?', opts:['UNIQUE','DISTINCT','FILTER','NODUPE'], ans:1 },
+    ]
+  },
+  {
+    id:'java', name:'Java', icon:'☕', cat:'programming', diff:'int',
+    desc:'Write once, run anywhere — the enterprise backbone and Android\'s primary language.',
+    color:'var(--amber)', tagBg:'var(--amber-light)', tagColor:'var(--amber)', tag:'Programming',
+    theory:`
+      <p>Java is a strongly-typed, object-oriented language designed by Sun Microsystems in 1995. It runs on the Java Virtual Machine (JVM), making it platform-independent.</p>
+      <h4>Core Principles</h4>
+      <ul>
+        <li><strong>OOP:</strong> Everything is in a class. Four pillars: Encapsulation, Inheritance, Polymorphism, Abstraction.</li>
+        <li><strong>Types:</strong> Primitive types (<code>int</code>, <code>double</code>, <code>boolean</code>, <code>char</code>) and reference types (objects).</li>
+        <li><strong>Access Modifiers:</strong> <code>public</code>, <code>private</code>, <code>protected</code>, package-private.</li>
+        <li><strong>Interfaces:</strong> Define contracts that classes implement.</li>
+        <li><strong>Collections:</strong> <code>ArrayList</code>, <code>HashMap</code>, <code>HashSet</code> from <code>java.util</code>.</li>
+        <li><strong>Exception Handling:</strong> <code>try/catch/finally</code> blocks prevent crashes.</li>
+      </ul>
+      <h4>Hello World</h4>
+      <p><code>public class Main { public static void main(String[] args) { System.out.println("Hello"); } }</code></p>
+    `,
+    quiz:[
+      { q:'What is the entry point method in Java?', opts:['start()','run()','main()','init()'], ans:2 },
+      { q:'Which keyword prevents a class from being inherited?', opts:['static','final','private','sealed'], ans:1 },
+      { q:'Java programs run on which virtual machine?', opts:['CLR','V8','JVM','Dalvik'], ans:2 },
+      { q:'What is the correct data type for "Hello" in Java?', opts:['char','String','text','varchar'], ans:1 },
+      { q:'Which collection allows duplicate values?', opts:['HashSet','TreeSet','ArrayList','LinkedHashSet'], ans:2 },
+    ]
+  },
+  {
+    id:'cpp', name:'C++', icon:'⚙️', cat:'programming', diff:'adv',
+    desc:'The performance powerhouse behind game engines, embedded systems, and competitive programming.',
+    color:'var(--violet)', tagBg:'var(--violet-light)', tagColor:'var(--violet)', tag:'Programming',
+    theory:`
+      <p>C++ is a general-purpose language created by Bjarne Stroustrup as an extension of C. It supports procedural, object-oriented, and generic programming.</p>
+      <h4>Key Features</h4>
+      <ul>
+        <li><strong>Pointers:</strong> Variables storing memory addresses. Fundamental for manual memory management.</li>
+        <li><strong>References:</strong> Aliases for existing variables — safer than raw pointers.</li>
+        <li><strong>Memory Management:</strong> <code>new</code> allocates heap memory; <code>delete</code> frees it. Smart pointers (<code>unique_ptr</code>, <code>shared_ptr</code>) manage this automatically.</li>
+        <li><strong>Templates:</strong> Generic programming — write code that works for any type.</li>
+        <li><strong>STL:</strong> Standard Template Library provides <code>vector</code>, <code>map</code>, <code>set</code>, <code>algorithm</code> etc.</li>
+        <li><strong>RAII:</strong> Resource Acquisition Is Initialisation — resources tied to object lifetime.</li>
+      </ul>
+      <h4>Compilation</h4>
+      <p>C++ is compiled to native machine code — no VM, which is why it is faster than Java or Python for compute-heavy tasks.</p>
+    `,
+    quiz:[
+      { q:'Which operator is used to access a pointer\'s value?', opts:['&','->','*','.'], ans:2 },
+      { q:'What does STL stand for?', opts:['Stored Template Library','Standard Template Library','System Type Library','Static Type Layer'], ans:1 },
+      { q:'Which smart pointer allows only one owner?', opts:['shared_ptr','weak_ptr','unique_ptr','raw_ptr'], ans:2 },
+      { q:'C++ is compiled to:', opts:['Bytecode','JavaScript','Native machine code','Intermediate language'], ans:2 },
+      { q:'Which keyword is used for templates?', opts:['generic','template','type','class<T>'], ans:1 },
+    ]
+  },
+  {
+    id:'react', name:'React', icon:'⚛️', cat:'web', diff:'int',
+    desc:'Facebook\'s UI library — build fast, component-driven user interfaces.',
+    color:'var(--sky)', tagBg:'var(--sky-light)', tagColor:'var(--sky)', tag:'Web Dev',
+    theory:`
+      <p>React is an open-source JavaScript library for building user interfaces, developed and maintained by Meta. It uses a component-based architecture.</p>
+      <h4>Core Concepts</h4>
+      <ul>
+        <li><strong>Components:</strong> Reusable pieces of UI — can be functional or class-based. Modern React uses functional components exclusively.</li>
+        <li><strong>JSX:</strong> JavaScript XML — lets you write HTML-like syntax inside JS. Compiled by Babel.</li>
+        <li><strong>Props:</strong> Read-only data passed from parent to child components.</li>
+        <li><strong>State:</strong> Internal, mutable data managed via the <code>useState</code> hook.</li>
+        <li><strong>Hooks:</strong> <code>useState</code>, <code>useEffect</code>, <code>useContext</code>, <code>useRef</code> add functionality to functional components.</li>
+        <li><strong>Virtual DOM:</strong> React maintains a lightweight copy of the DOM and diffs it to minimise real DOM updates.</li>
+      </ul>
+      <h4>useEffect</h4>
+      <p><code>useEffect(() => { fetchData(); }, [dependency]);</code> — runs after render, optionally re-runs when dependency changes.</p>
+    `,
+    quiz:[
+      { q:'What hook manages local state in React?', opts:['useRef','useEffect','useState','useReducer'], ans:2 },
+      { q:'JSX stands for?', opts:['JavaScript XML','Java Script Extra','JSON eXtended','JavaScript eXtended'], ans:0 },
+      { q:'Props in React are:', opts:['Mutable','Read-only','Both','Neither'], ans:1 },
+      { q:'Which hook runs side effects after render?', opts:['useState','useMemo','useEffect','useCallback'], ans:2 },
+      { q:'React\'s Virtual DOM is used to:', opts:['Render CSS','Store data','Minimise real DOM updates','Replace HTML'], ans:2 },
+    ]
+  },
+  {
+    id:'ds', name:'Data Structures', icon:'🌲', cat:'cs', diff:'int',
+    desc:'The building blocks every programmer must master — arrays, trees, graphs, and more.',
+    color:'var(--moss)', tagBg:'var(--moss-light)', tagColor:'var(--moss)', tag:'CS Fundamentals',
+    theory:`
+      <p>A data structure is a way of organising data in memory to enable efficient access and modification. Choosing the right structure is often more impactful than algorithm choice.</p>
+      <h4>Common Structures</h4>
+      <ul>
+        <li><strong>Array:</strong> Fixed-size, indexed. O(1) access, O(n) insert/delete.</li>
+        <li><strong>Linked List:</strong> Nodes with pointers. O(1) insert at head, O(n) search.</li>
+        <li><strong>Stack:</strong> LIFO (Last In First Out). Used in function call stacks, undo systems.</li>
+        <li><strong>Queue:</strong> FIFO (First In First Out). Used in BFS, task scheduling.</li>
+        <li><strong>Hash Table:</strong> Key-value pairs with O(1) average access. Used for dictionaries, caches.</li>
+        <li><strong>Binary Tree:</strong> Each node has at most two children. BST enables O(log n) search.</li>
+        <li><strong>Graph:</strong> Nodes (vertices) connected by edges. Models networks, maps, dependencies.</li>
+      </ul>
+      <h4>Complexity Rule of Thumb</h4>
+      <p>O(1) > O(log n) > O(n) > O(n log n) > O(n²) > O(2ⁿ) — the earlier in this list, the better.</p>
+    `,
+    quiz:[
+      { q:'Which structure follows LIFO?', opts:['Queue','Linked List','Stack','Heap'], ans:2 },
+      { q:'What is the average time complexity of hash table lookup?', opts:['O(n)','O(log n)','O(1)','O(n²)'], ans:2 },
+      { q:'A Binary Search Tree guarantees O(log n) operations when it is:', opts:['Full','Complete','Balanced','Perfect'], ans:2 },
+      { q:'BFS (Breadth First Search) typically uses a:', opts:['Stack','Priority Queue','Queue','Deque'], ans:2 },
+      { q:'Which data structure models a social network?', opts:['Array','Tree','Graph','Linked List'], ans:2 },
+    ]
+  },
+  {
+    id:'algo', name:'Algorithms', icon:'🔁', cat:'cs', diff:'adv',
+    desc:'Sort, search, and solve — the systematic thinking behind efficient programs.',
+    color:'var(--violet)', tagBg:'var(--violet-light)', tagColor:'var(--violet)', tag:'CS Fundamentals',
+    theory:`
+      <p>An algorithm is a step-by-step procedure for solving a problem. Analysing algorithms by their time and space complexity helps pick the best approach.</p>
+      <h4>Sorting Algorithms</h4>
+      <ul>
+        <li><strong>Bubble Sort:</strong> O(n²) — simple but slow. Good for learning, not production.</li>
+        <li><strong>Merge Sort:</strong> O(n log n) — divide and conquer, stable sort.</li>
+        <li><strong>Quick Sort:</strong> O(n log n) average — in-place, fast in practice.</li>
+        <li><strong>Heap Sort:</strong> O(n log n) — uses a binary heap, not stable.</li>
+      </ul>
+      <h4>Searching</h4>
+      <ul>
+        <li><strong>Linear Search:</strong> O(n) — check every element.</li>
+        <li><strong>Binary Search:</strong> O(log n) — requires sorted array. Halves the search space each step.</li>
+      </ul>
+      <h4>Problem-Solving Paradigms</h4>
+      <ul>
+        <li><strong>Divide & Conquer:</strong> Split problem, solve recursively, merge results.</li>
+        <li><strong>Dynamic Programming:</strong> Cache sub-problem results to avoid recomputation.</li>
+        <li><strong>Greedy:</strong> Make locally optimal choice at each step.</li>
+        <li><strong>Backtracking:</strong> Try all possibilities, undo on failure.</li>
+      </ul>
+    `,
+    quiz:[
+      { q:'What is the time complexity of Binary Search?', opts:['O(n)','O(n²)','O(log n)','O(1)'], ans:2 },
+      { q:'Which sorting algorithm uses divide and conquer with O(n log n)?', opts:['Bubble Sort','Selection Sort','Merge Sort','Insertion Sort'], ans:2 },
+      { q:'Dynamic Programming works by:', opts:['Random trials','Caching sub-problem results','Greedy choices','Backtracking'], ans:1 },
+      { q:'Quick Sort performs poorly on:', opts:['Random arrays','Already-sorted arrays','Large arrays','Float arrays'], ans:1 },
+      { q:'Which paradigm is used in Dijkstra\'s shortest path algorithm?', opts:['Backtracking','Divide & Conquer','Greedy','Dynamic Programming'], ans:2 },
+    ]
+  },
+  {
+    id:'git', name:'Git', icon:'🔀', cat:'cs', diff:'beg',
+    desc:'Version control every developer must know — track changes, collaborate, ship confidently.',
+    color:'var(--rose)', tagBg:'var(--rose-light)', tagColor:'var(--rose)', tag:'CS Fundamentals',
+    theory:`
+      <p>Git is a distributed version control system (DVCS) created by Linus Torvalds in 2005. It tracks changes to code over time and enables collaboration.</p>
+      <h4>Core Concepts</h4>
+      <ul>
+        <li><strong>Repository (repo):</strong> A directory tracked by Git — contains all history.</li>
+        <li><strong>Commit:</strong> A snapshot of changes with a message. Identified by a SHA hash.</li>
+        <li><strong>Branch:</strong> An independent line of development. <code>main</code> is the default.</li>
+        <li><strong>Merge:</strong> Integrate changes from one branch into another.</li>
+        <li><strong>Pull Request (PR):</strong> A request to merge one branch into another — common in team workflows.</li>
+        <li><strong>Remote:</strong> A hosted copy of the repo (e.g. GitHub, GitLab).</li>
+      </ul>
+      <h4>Essential Commands</h4>
+      <ul>
+        <li><code>git init</code> — create a repo</li>
+        <li><code>git add .</code> — stage all changes</li>
+        <li><code>git commit -m "message"</code> — commit</li>
+        <li><code>git push origin main</code> — push to remote</li>
+        <li><code>git pull</code> — fetch + merge from remote</li>
+        <li><code>git checkout -b feature</code> — create + switch branch</li>
+      </ul>
+    `,
+    quiz:[
+      { q:'What command stages all changes in Git?', opts:['git commit','git push','git add .','git init'], ans:2 },
+      { q:'Which command creates a new branch AND switches to it?', opts:['git branch','git merge','git checkout -b','git fork'], ans:2 },
+      { q:'A Git commit is identified by a:', opts:['File name','Line number','SHA hash','Branch name'], ans:2 },
+      { q:'git pull is equivalent to:', opts:['git fetch + git rebase','git fetch + git merge','git clone + git pull','git push + git merge'], ans:1 },
+      { q:'Where are remote repositories typically hosted?', opts:['Local disk only','Virtual machine','GitHub / GitLab','Browser cache'], ans:2 },
+    ]
+  },
+  {
+    id:'typescript', name:'TypeScript', icon:'🔷', cat:'programming', diff:'int',
+    desc:'JavaScript with static types — fewer bugs, better tooling, more confidence at scale.',
+    color:'var(--sky)', tagBg:'var(--sky-light)', tagColor:'var(--sky)', tag:'Programming',
+    theory:`
+      <p>TypeScript is a strongly-typed superset of JavaScript developed by Microsoft. It compiles to plain JavaScript. All valid JavaScript is valid TypeScript.</p>
+      <h4>Type System</h4>
+      <ul>
+        <li><strong>Primitive types:</strong> <code>string</code>, <code>number</code>, <code>boolean</code>, <code>null</code>, <code>undefined</code>, <code>symbol</code>.</li>
+        <li><strong>Type annotations:</strong> <code>let age: number = 25;</code></li>
+        <li><strong>Interfaces:</strong> Define the shape of an object — <code>interface User { name: string; age: number; }</code>.</li>
+        <li><strong>Type aliases:</strong> <code>type ID = string | number;</code> — union types.</li>
+        <li><strong>Generics:</strong> <code>function identity&lt;T&gt;(arg: T): T { return arg; }</code></li>
+        <li><strong>Enums:</strong> Named constants — <code>enum Direction { Up, Down, Left, Right }</code>.</li>
+      </ul>
+      <h4>Why TypeScript?</h4>
+      <ul>
+        <li>Catch errors at compile time, not runtime.</li>
+        <li>Better IDE autocomplete and refactoring.</li>
+        <li>Self-documenting code — types are part of the API contract.</li>
+      </ul>
+    `,
+    quiz:[
+      { q:'TypeScript is a superset of:', opts:['Python','Java','JavaScript','C#'], ans:2 },
+      { q:'What keyword defines an object shape in TypeScript?', opts:['class','type','interface','struct'], ans:2 },
+      { q:'A union type is written as:', opts:['string & number','string | number','string + number','<string,number>'], ans:1 },
+      { q:'TypeScript compiles to:', opts:['Bytecode','Native code','WebAssembly','JavaScript'], ans:3 },
+      { q:'Generics use which syntax?', opts:['[]','{}','<>','()'], ans:2 },
+    ]
+  },
+  {
+    id:'communication', name:'Communication Skills', icon:'🗣️', cat:'soft', diff:'beg',
+    desc:'Master verbal, written, and interpersonal communication — essential for every career.',
+    color:'var(--amber)', tagBg:'var(--amber-light)', tagColor:'var(--amber)', tag:'Soft Skills',
+    theory:`
+      <p>Communication is the process of conveying information, ideas, and feelings clearly and effectively between people. Strong communication skills are consistently ranked as the top attribute employers seek.</p>
+      <h4>Types of Communication</h4>
+      <ul>
+        <li><strong>Verbal:</strong> Spoken words — tone, clarity, pace, and word choice all matter. Active listening is equally important as speaking.</li>
+        <li><strong>Non-verbal:</strong> Body language, eye contact, facial expressions, and posture. Research suggests over 55% of communication is non-verbal.</li>
+        <li><strong>Written:</strong> Emails, reports, messages — requires clarity, correct grammar, and appropriate tone for the audience.</li>
+        <li><strong>Visual:</strong> Charts, diagrams, presentations — helps simplify complex information.</li>
+      </ul>
+      <h4>Key Principles of Effective Communication</h4>
+      <ul>
+        <li><strong>Clarity:</strong> Use simple, direct language. Avoid jargon unless your audience understands it.</li>
+        <li><strong>Active Listening:</strong> Pay full attention, acknowledge the speaker, and respond thoughtfully. Avoid interrupting.</li>
+        <li><strong>Empathy:</strong> Understand the other person's perspective before responding — it builds trust and reduces conflict.</li>
+        <li><strong>Conciseness:</strong> Say what you need to say without unnecessary filler. Respect the listener's time.</li>
+        <li><strong>Feedback:</strong> Communication is two-way. Ask for and act on feedback to confirm understanding.</li>
+        <li><strong>Tone Awareness:</strong> Adjust your tone to the context — formal in professional settings, relaxed in casual ones.</li>
+      </ul>
+      <h4>Common Communication Barriers</h4>
+      <ul>
+        <li>Physical noise or distractions</li>
+        <li>Emotional states (anger, anxiety, stress)</li>
+        <li>Language or cultural differences</li>
+        <li>Assumptions and lack of context</li>
+        <li>Information overload</li>
+      </ul>
+      <h4>Professional Communication Tips</h4>
+      <ul>
+        <li>Structure emails: subject → greeting → purpose → details → call to action → sign-off.</li>
+        <li>In meetings: prepare an agenda, stay on topic, summarise action points at the end.</li>
+        <li>In presentations: tell a story — problem → insight → solution → outcome.</li>
+        <li>In conflicts: use "I" statements ("I felt…") rather than "You" accusations.</li>
+      </ul>
+    `,
+    quiz:[
+      { q:'What percentage of communication is generally considered non-verbal?', opts:['10%','25%','Over 55%','80%'], ans:2 },
+      { q:'Active listening means:', opts:['Talking more than the other person','Waiting for your turn to speak','Paying full attention and responding thoughtfully','Nodding without processing what is said'], ans:2 },
+      { q:'Which principle means saying what you need to without unnecessary filler?', opts:['Empathy','Clarity','Conciseness','Feedback'], ans:2 },
+      { q:'When writing a professional email, the correct structure is:', opts:['Details → Subject → Sign-off','Subject → Purpose → Details → Call to action','Greeting → Sign-off → Subject','Call to action → Details → Purpose'], ans:1 },
+      { q:'Using "I" statements in a conflict helps to:', opts:['Blame the other person','Express your feelings without accusation','Avoid the topic','Win the argument'], ans:1 },
+    ]
+  },
+];
+
+/* ═══════════ STATE ═══════════ */
+let currentSkillId = null;
+let quizAnswers = {};
+let starValue = 0;
+const savedReviews = [];
+
+/* ═══════════ PAGE NAV ═══════════ */
+function goPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ═══════════ RENDER GRIDS ═══════════ */
+function diffLabel(d) {
+  if(d==='beg') return '<span class="diff diff-beg">Beginner</span>';
+  if(d==='int') return '<span class="diff diff-int">Intermediate</span>';
+  return '<span class="diff diff-adv">Advanced</span>';
+}
+
+function buildHomeGrid() {
+  const g = document.getElementById('home-skills-grid');
+  SKILLS.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'skill-card';
+    card.style.cssText = `--accent-color:${s.color}; --tag-bg:${s.tagBg}; --tag-color:${s.tagColor};`;
+    card.innerHTML = `<div class="card-icon">${s.icon}</div><div class="card-name">${s.name}</div><div class="card-desc">${s.desc}</div><span class="card-tag">${s.tag}</span>`;
+    card.onclick = () => openSkill(s.id);
+    g.appendChild(card);
+  });
+}
+
+function buildLearnGrid(filter='all') {
+  const g = document.getElementById('learn-grid');
+  g.innerHTML = '';
+  const list = filter==='all' ? SKILLS : SKILLS.filter(s=>s.cat===filter);
+  list.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'learn-card';
+    card.style.borderTop = `4px solid ${s.color}`;
+    card.innerHTML = `
+      <div class="learn-card-top" style="background:${s.tagBg}">${s.icon}</div>
+      <div class="learn-card-body">
+        <h3>${s.name}</h3>
+        <p>${s.desc}</p>
+        <div class="learn-card-meta">
+          ${diffLabel(s.diff)}
+          <span>${s.quiz.length} questions</span>
+        </div>
+      </div>`;
+    card.onclick = () => openSkill(s.id);
+    g.appendChild(card);
+  });
+}
+
+function filterLearn(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildLearnGrid(cat);
+}
+
+/* ═══════════ SKILL MODAL ═══════════ */
+function openSkill(id) {
+  const s = SKILLS.find(x=>x.id===id);
+  if(!s) return;
+  currentSkillId = id;
+  quizAnswers = {};
+  document.getElementById('m-icon').textContent = s.icon;
+  document.getElementById('m-title').textContent = s.name;
+  const badge = document.getElementById('m-badge');
+  badge.textContent = s.tag;
+  badge.style.cssText = `background:${s.tagBg};color:${s.tagColor}`;
+  document.getElementById('theory-body').innerHTML = s.theory;
+  buildQuiz(s);
+  // reset tabs
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.modal-tab').classList.add('active');
+  document.getElementById('tab-theory').classList.add('active');
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-submit-btn').style.display='inline-block';
+  document.getElementById('skill-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function buildQuiz(s) {
+  const body = document.getElementById('quiz-body');
+  body.innerHTML = '';
+  s.quiz.forEach((q,qi) => {
+    const div = document.createElement('div');
+    div.className='quiz-q';
+    div.innerHTML=`<div class="q-text">${qi+1}. ${q.q}</div>`;
+    q.opts.forEach((opt,oi) => {
+      const row = document.createElement('div');
+      row.className='quiz-option';
+      row.id=`opt-${qi}-${oi}`;
+      row.innerHTML=`<input type="radio" name="q${qi}" value="${oi}"> ${opt}`;
+      row.onclick = () => selectOpt(qi,oi,s.quiz.length);
+      div.appendChild(row);
+    });
+    body.appendChild(div);
+  });
+}
+
+function selectOpt(qi,oi,total) {
+  quizAnswers[qi]=oi;
+  // clear siblings
+  for(let x=0;x<10;x++){
+    const el=document.getElementById(`opt-${qi}-${x}`);
+    if(el) el.classList.remove('selected');
+  }
+  const el=document.getElementById(`opt-${qi}-${oi}`);
+  if(el) el.classList.add('selected');
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+function submitQuiz() {
+  const s = SKILLS.find(x=>x.id===currentSkillId);
+  let score=0;
+  s.quiz.forEach((q,qi) => {
+    const chosen=quizAnswers[qi];
+    for(let oi=0;oi<q.opts.length;oi++){
+      const el=document.getElementById(`opt-${qi}-${oi}`);
+      if(!el) continue;
+      el.classList.remove('selected','correct','wrong');
+      if(oi===q.ans) el.classList.add('correct');
+      else if(oi===chosen && chosen!==q.ans) el.classList.add('wrong');
+    }
+    if(chosen===q.ans) score++;
+  });
+  const pct=Math.round(score/s.quiz.length*100);
+  const res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(pct>=60){
+    res.className='quiz-result pass';
+    res.textContent=`✅ You scored ${score}/${s.quiz.length} (${pct}%) — Well done!`;
+  } else {
+    res.className='quiz-result fail';
+    res.textContent=`❌ You scored ${score}/${s.quiz.length} (${pct}%) — Review the theory and try again.`;
+  }
+  document.getElementById('quiz-submit-btn').style.display='none';
+}
+
+function closeSkill() {
+  document.getElementById('skill-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function closeOverlay(e) { if(e.target===document.getElementById('skill-overlay')) closeSkill(); }
+
+/* ═══════════ STARS ═══════════ */
+document.querySelectorAll('.star').forEach(star => {
+  star.addEventListener('click', () => {
+    starValue = parseInt(star.dataset.v);
+    document.querySelectorAll('.star').forEach(s => {
+      s.classList.toggle('lit', parseInt(s.dataset.v) <= starValue);
+    });
+  });
+});
+
+
+
+function submitReview() {
+  const name=document.getElementById('rv-name').value.trim();
+  const skill=document.getElementById('rv-skill').value;
+  const diff=document.getElementById('rv-diff').value;
+  const text=document.getElementById('rv-text').value.trim();
+  if(!name||!skill||!diff||!text||starValue===0){ alert('Please fill all fields and select a star rating.'); return; }
+  const labels=['','Poor','Fair','Good','Very Good','Excellent'];
+  savedReviews.push({ name, skill, diff, stars:starValue, text, rating:labels[starValue] });
+  // reset
+  document.getElementById('rv-name').value='';
+  document.getElementById('rv-skill').value='';
+  document.getElementById('rv-diff').value='';
+  document.getElementById('rv-text').value='';
+  starValue=0;
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  const msg=document.getElementById('submit-msg');
+  msg.style.display='block';
+  setTimeout(()=>msg.style.display='none',3500);
+}
+
+/* ═══════════ INIT ═══════════ */
+buildHomeGrid();
+buildLearnGrid();
+</script>
+</body>
+</html>
